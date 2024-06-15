@@ -1,9 +1,13 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -12,8 +16,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.entities.Department;
+import model.services.DepartmentService;
 
 public class DepartmentListController implements Initializable {
+	
+	/* Criando uma dependência para o DepartmentService.
+	 * */
+	private DepartmentService service;
     
 	/* O TableView é um tipo genérico, ou seja, ele é parametrizado
 	 * por tipo, essa é uma referência para o controle TableView
@@ -35,9 +44,16 @@ public class DepartmentListController implements Initializable {
 	@FXML
 	private Button btNew;
 	
+	private ObservableList<Department> obsList;
+	
 	@FXML
 	public void onBtNewAction() {
 		System.out.println("onBtNewAction");
+	}
+	
+	/* Método responsável por injetar uma dependência */
+	public void setDepartmentService(DepartmentService service) {
+		this.service = service;
 	}
 
 	/* Esse método é executado quando o construtor é
@@ -72,6 +88,38 @@ public class DepartmentListController implements Initializable {
 		 * */
 		tableViewDepartment.prefHeightProperty().bind(stage.heightProperty());
 		
+	}
+	
+	/* Esse método será responsável por acessar o departmentService, carregar
+	 * os Departaments e inserir esses Departaments na minha
+	 * observableList e aí sim, esse ObservableList será associado
+	 * com o meu tableView e aí os department serão exibidos na tela
+	 * para mim.
+	 *  */
+	public void updateTableView() {
+		/* Se o programador esquecer de injetar a dependência
+		 * ao service, uma exceção será lançada.
+		 * 
+		 * Isso também está sendo feito porque a nossa injeção
+		 * de dependência é totalmente manual, nós não estamos
+		 * usando um container ou um framework que fará isso
+		 * automáticamente para nós.
+		 * 
+		 * Essa é uma programação defensiva.
+		 * */
+		if(service == null) {
+			throw new IllegalArgumentException("Service was null");
+		}
+		
+		List<Department> list = service.findAll();
+		
+		/* Isso aqui já instância o meu observableList e insere
+		 * nele os dados da list comum.
+		 * */
+		obsList = FXCollections.observableArrayList(list);
+		
+		/* Inserindo os dados da obsList na tableView */
+		tableViewDepartment.setItems(obsList);
 	}
 
 }
