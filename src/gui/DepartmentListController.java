@@ -1,19 +1,27 @@
 package gui;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
@@ -47,8 +55,9 @@ public class DepartmentListController implements Initializable {
 	private ObservableList<Department> obsList;
 	
 	@FXML
-	public void onBtNewAction() {
-		System.out.println("onBtNewAction");
+	public void onBtNewAction(ActionEvent event) {
+		Stage parentStage = Utils.currentStage(event);
+		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
 	}
 	
 	/* Método responsável por injetar uma dependência */
@@ -120,6 +129,52 @@ public class DepartmentListController implements Initializable {
 		
 		/* Inserindo os dados da obsList na tableView */
 		tableViewDepartment.setItems(obsList);
+	}
+	
+	/* Método responsável por criar uma window de dialógo ou seja,
+	 * um modal, quando criamos um modal precisamos informar
+	 * para ele qual é a janela pai(parentStage) que criou esse
+	 * Modal de dialogo, a janela pai seria  janela já existente
+	 * na tela, uma vez que, o modal ficará por cima dela, então, em
+	 * última instância, esse método cria um nova window */
+	private void createDialogForm(String absoluteName, Stage parentStage) {
+		try {
+			/* 
+			* Obtendo o FXML correspondente a alguma view
+			* partir do seu caminho absoluto. 
+			**/
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			
+			Pane pane = loader.load();
+			
+			/* Quando eu vou carregar uma janela modal na frente
+			 * janela existente, eu tenho que instânciar um novo
+			 * stage, então será um stage na frente do outro */
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Enter Department data");
+			dialogStage.setScene(new Scene(pane));
+			/* Defindo a window(stage) como redimensionável */
+			dialogStage.setResizable(false);
+			
+			/* Setando o Stage(window) pai dessa window modal que será aberta */
+			dialogStage.initOwner(parentStage);
+			
+			/* 
+			 * Método responsável por definir se o comportamento
+			 * da window sendo aberta será modal ou se terá outro
+			 * comportamento.
+			 * 
+			 * Uma janela com um comportamento modal não aceita que
+			 * eu acesse outras windows sem que eu feche ela antes.
+			 * 
+			 * */
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.showAndWait();
+		} catch (IOException e) {
+			Alerts.showAlert("IO Exception","Error loading dialog window", e.getMessage(), AlertType.ERROR);
+		} finally {
+			
+		}
 	}
 
 }

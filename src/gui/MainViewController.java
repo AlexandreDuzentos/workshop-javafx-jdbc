@@ -132,6 +132,9 @@ public class MainViewController implements Initializable {
 			 * de VBox e eu desejo ter um componente do tipo VBox, por isso é que
 			 * foi feito o downcasting para VBox.
 			 * 
+			 * geralmente fazemos um downcasting quando pretendemos acessar
+			 * algum método que o supertipo não possui, mas o subtipo possui.
+			 * 
 			 * Abaixo nós temos uma referência para o VBox que está na minha
 			 * janela principal.
 			 *  */
