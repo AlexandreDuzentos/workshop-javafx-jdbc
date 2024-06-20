@@ -56,11 +56,19 @@ public class DepartmentListController implements Initializable {
 	
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
-		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
+		Stage parentStage = Utils.currentStage(event); 
+		
+		/* Instânciando um Department vazio, ou seja, sem dados nele,
+		 * isto porque essa é a uma operação de salvamento de um
+		 * novo Department, logo, os campos do formulário não precisarão
+		 * ser carregados com dados.
+		 * */
+		Department dep = new Department();
+		createDialogForm(dep ,"/gui/DepartmentForm.fxml", parentStage);
 	}
 	
-	/* Método responsável por injetar uma dependência */
+	/* Método responsável por injetar uma dependência para o objeto
+	 * DepartmentService */
 	public void setDepartmentService(DepartmentService service) {
 		this.service = service;
 	}
@@ -137,7 +145,7 @@ public class DepartmentListController implements Initializable {
 	 * Modal de dialogo, a janela pai seria  janela já existente
 	 * na tela, uma vez que, o modal ficará por cima dela, então, em
 	 * última instância, esse método cria um nova window */
-	private void createDialogForm(String absoluteName, Stage parentStage) {
+	private void createDialogForm(Department dep, String absoluteName, Stage parentStage) {
 		try {
 			/* 
 			* Obtendo o FXML correspondente a alguma view
@@ -146,6 +154,11 @@ public class DepartmentListController implements Initializable {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			
 			Pane pane = loader.load();
+			
+			/* Injetando o Department passado como argumento no DepartmentFormController */
+			DepartmentFormController controller = loader.getController();
+			controller.setDepartment(dep);
+			controller.updateFormData();
 			
 			/* Quando eu vou carregar uma janela modal na frente
 			 * janela existente, eu tenho que instânciar um novo

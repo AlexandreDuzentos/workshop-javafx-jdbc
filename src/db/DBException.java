@@ -1,5 +1,9 @@
 package db;
 
+/* 
+ * Exceção que será lançada quando o banco de dados
+ * lançar alguma exceção.
+ * */
 public class DBException extends RuntimeException {
 
 	/**
