@@ -9,7 +9,7 @@ import model.entities.Department;
 
 public class DepartmentService {
 	
-	private DepartmentDao depDao = DaoFactory.createDepartmentDao();
+	private static DepartmentDao depDao = DaoFactory.createDepartmentDao();
    
 	public List<Department> findAll(){
 		/*
@@ -26,5 +26,16 @@ public class DepartmentService {
 		*/
 		
 		return depDao.findAll();
+	}
+	
+	public void saveOrUpdate(Department dep) {
+		/* Se essa condição for verdadeira, quer dizer
+		 * que é uma inserção de um Deparment */
+		if(dep.getId() == null) {
+			depDao.insert(dep);
+		} else {
+			depDao.update(dep);
+		}
+		
 	}
 }

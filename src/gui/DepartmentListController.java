@@ -155,9 +155,14 @@ public class DepartmentListController implements Initializable {
 			
 			Pane pane = loader.load();
 			
-			/* Injetando o Department passado como argumento no DepartmentFormController */
+			/* Injetando o Department passado como argumento no
+			 * DepartmentFormController, passar um objeto para o
+			 * formulário é uma prática comum quando nós estamos
+			 * trabalhando no padrão MVC.
+			 *  */
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(dep);
+			controller.setDepartmentService(new DepartmentService());
 			controller.updateFormData();
 			
 			/* Quando eu vou carregar uma janela modal na frente

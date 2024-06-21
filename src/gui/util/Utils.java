@@ -15,4 +15,18 @@ public class Utils {
 	public static Stage currentStage(ActionEvent event) {
 		return (Stage)((Node)event.getSource()).getScene().getWindow();
 	}
+	
+	/* Método responsável por tentar efetuar uma conversão de uma
+	 * String para Integer.
+	 *  */
+	public static Integer tryParseToInt(String str) {
+		try {
+		   return Integer.parseInt(str);
+		} catch(NumberFormatException e) {
+		   return null;
+		}
+		
+		
+	}
+	
 }
