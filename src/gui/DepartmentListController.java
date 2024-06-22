@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -26,11 +27,11 @@ import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
 
-public class DepartmentListController implements Initializable {
+public class DepartmentListController implements Initializable, DataChangeListener {
 	
 	/* Criando uma dependência para o DepartmentService.
 	 * */
-	private DepartmentService service;
+	private DepartmentService departmentService;
     
 	/* O TableView é um tipo genérico, ou seja, ele é parametrizado
 	 * por tipo, essa é uma referência para o controle TableView
@@ -69,8 +70,8 @@ public class DepartmentListController implements Initializable {
 	
 	/* Método responsável por injetar uma dependência para o objeto
 	 * DepartmentService */
-	public void setDepartmentService(DepartmentService service) {
-		this.service = service;
+	public void setDepartmentService(DepartmentService departmentService) {
+		this.departmentService = departmentService;
 	}
 
 	/* Esse método é executado quando o construtor é
@@ -124,11 +125,11 @@ public class DepartmentListController implements Initializable {
 		 * 
 		 * Essa é uma programação defensiva.
 		 * */
-		if(service == null) {
+		if(departmentService == null) {
 			throw new IllegalArgumentException("Service was null");
 		}
 		
-		List<Department> list = service.findAll();
+		List<Department> list = departmentService.findAll();
 		
 		/* Isso aqui já instância o meu observableList e insere
 		 * nele os dados da list comum.
@@ -163,6 +164,9 @@ public class DepartmentListController implements Initializable {
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(dep);
 			controller.setDepartmentService(new DepartmentService());
+			
+			/* Registrando um listener que será notificado quando o evento ocorrer */
+			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 			
 			/* Quando eu vou carregar uma janela modal na frente
@@ -193,6 +197,12 @@ public class DepartmentListController implements Initializable {
 		} finally {
 			
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+		updateTableView();
+		
 	}
 
 }

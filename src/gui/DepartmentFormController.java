@@ -1,9 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DBException;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -24,6 +27,11 @@ public class DepartmentFormController implements Initializable {
 	
 	/* Criando uma dependência desse controller com o DepartmentService */
 	private DepartmentService depService;
+	
+	/* Essa coleção armazerá os objetos interessados em serem notificados
+	 * quando o evento onDataChanged ocorrer.
+	 * */
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 	
 	@FXML
 	private TextField txtId;
@@ -54,7 +62,7 @@ public class DepartmentFormController implements Initializable {
 		try {
 			entity = getFormData();
 			depService.saveOrUpdate(entity); 
-			
+			notifyDataChangeListeners();
 			/* Fechando a janela DepartmentForm após o salvamento
 			 * de um Department ocorrer com sucesso.
 			 * */
@@ -64,6 +72,13 @@ public class DepartmentFormController implements Initializable {
 		}
 	}
 	
+	private void notifyDataChangeListeners() {
+		for(DataChangeListener listener : dataChangeListeners) {
+			listener.onDataChanged();
+		}
+		
+	}
+
 	private Department getFormData() {
 		Department obj = new Department();
 		
@@ -97,6 +112,16 @@ public class DepartmentFormController implements Initializable {
 	
 	public void setDepartmentService(DepartmentService depService) {
 		this.depService = depService;
+	}
+	
+	/* Método responsável por inscrever um objeto interessado
+	 * em ser notificado quando o evento onDataChanged ocorrer,
+	 * isso desde que esse objeto implemente a interface
+	 * DataChangeListener.
+	 * 
+	 * */
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		this.dataChangeListeners.add(listener);
 	}
 	
 	/* Método responsável por atualizar os valores dos campos
