@@ -3,9 +3,11 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Main;
+import db.DBIntegrityException;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -19,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -54,6 +57,9 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	
 	@FXML
 	private TableColumn<Department, Department> tableColumnEDIT;
+	
+	@FXML
+	private TableColumn<Department, Department> tableColumnREMOVE;
 	
 	@FXML
 	private Button btNew;
@@ -145,6 +151,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
 		tableViewDepartment.setItems(obsList);
 		
 		initEditButtons();
+		initRemoveButtons();
 	}
 	
 	/* Método responsável por criar uma window de dialógo ou seja,
@@ -236,5 +243,56 @@ public class DepartmentListController implements Initializable, DataChangeListen
 						 } 
 					 }); 
 		} 
+	
+	public void initRemoveButtons() {
+		tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue())); 
+		tableColumnREMOVE.setCellFactory(param -> new TableCell<Department, Department>() { 
+		     private final Button button = new Button("delete");
+		     
+			 @Override
+			 protected void updateItem(Department obj, boolean empty) { 
+				 super.updateItem(obj, empty); 
+				 
+				 if (obj == null) { 
+					 setGraphic(null); 
+					 return; 
+			     } 
+				 
+				 setGraphic(button); 
+					 button.setOnAction( 
+					 event -> removeEntity(obj));       
+					 }
+ 
+				 }); 
+	}
+	
+	/* Método responsável por remover um Deparmento da minha TableView */
+	private void removeEntity(Department obj) {
+		/* O tipo Optional do java armazena um objeto cujo tipo
+		 * é correspondente ao tipo que ele foi parâmetrizado.
+		 * */
+		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
+		
+		/* 
+		 * Testando se o usuário clicou no botão de comfirmação
+		 * na hora de deletar um registro do banco de dados.
+		 * 
+		 * O método get do objeto Optional retorna o objeto armazenado dentro
+		 * do objeto optional.
+		 * */
+		if(result.get() == ButtonType.OK) {
+			if(departmentService == null) {
+				throw new IllegalArgumentException("service was null");
+			}
+			
+			try {
+				departmentService.remove(obj);
+				updateTableView();
+			} catch(DBIntegrityException e) {
+				Alerts.showAlert("Error removing Department", null, e.getMessage(), AlertType.ERROR);
+			}
+			
+		}
+	}
 
 }

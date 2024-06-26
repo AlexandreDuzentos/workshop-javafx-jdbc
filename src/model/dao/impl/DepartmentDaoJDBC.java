@@ -6,15 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import db.DB;
 import db.DBException;
+import db.DBIntegrityException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
-import model.entities.Seller;
 
 public class DepartmentDaoJDBC  implements DepartmentDao {
 	
@@ -109,7 +107,7 @@ public class DepartmentDaoJDBC  implements DepartmentDao {
 					throw new DBException("The informed id does not exist!");
 				}
 			} catch(SQLException e) {
-				throw new DBException(e.getMessage());
+				throw new DBIntegrityException(e.getMessage());
 			} finally {
 				DB.closeStatement(ps);
 			}
