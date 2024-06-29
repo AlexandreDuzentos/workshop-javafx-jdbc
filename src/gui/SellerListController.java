@@ -194,13 +194,13 @@ public class SellerListController implements Initializable, DataChangeListener {
 			 * formulário é uma prática comum quando nós estamos
 			 * trabalhando no padrão MVC.
 			 *  */
-			//SellerFormController controller = loader.getController();
-			//controller.setSeller(dep);
-			//controller.setSellerService(new SellerService());
+			 SellerFormController controller = loader.getController();
+			 controller.setSeller(dep);
+			 controller.setSellerService(new SellerService());
 			
 			/* Registrando um listener que será notificado quando o evento ocorrer */
-			//controller.subscribeDataChangeListener(this);
-			//controller.updateFormData();
+			controller.subscribeDataChangeListener(this);
+			controller.updateFormData();
 			
 			/* Quando eu vou carregar uma janela modal na frente
 			 * janela existente, eu tenho que instânciar um novo
