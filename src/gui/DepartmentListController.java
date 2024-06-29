@@ -40,14 +40,15 @@ public class DepartmentListController implements Initializable, DataChangeListen
     
 	/* O TableView é um tipo genérico, ou seja, ele é parametrizado
 	 * por tipo, essa é uma referência para o controle TableView
-	 * que está na minha tela.
+	 * que está na minha tela, o parâmetro que ele recebe é o
+	 *  tipo da TableView.
 	 * */
 	@FXML
 	private TableView<Department> tableViewDepartment;
 	
-	/* O tableColumn também é parametrizado por tipo, sendo 
-	 * o primeiro tipo o tipo da entidade e o segundo tipo
-	 * o tipo dos valores que vão na coluna da tabela.
+	/* O TableColumn também é parametrizado por tipo, sendo 
+	 * o primeiro tipo o tipo da TableView e o segundo tipo
+	 * o tipo do conteúdo em todas as células dessa TableColumn.
 	 * */
 	@FXML
 	private TableColumn<Department, Integer> tableColumnId;
