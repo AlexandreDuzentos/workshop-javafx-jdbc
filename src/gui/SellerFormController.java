@@ -15,16 +15,24 @@ import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
+import model.entities.Department;
 import model.entities.Seller;
 import model.exceptions.ValidationException;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerFormController implements Initializable {
@@ -34,6 +42,10 @@ public class SellerFormController implements Initializable {
 	
 	/* Criando uma dependência desse controller com o SellerService */
 	private SellerService sellerService;
+	
+	/* Criando uma dependência com o DepartmentService */
+	private DepartmentService depService;
+	
 	
 	/* Essa coleção armazerá os objetos interessados em serem notificados
 	 * quando o evento onDataChanged ocorrer.
@@ -56,6 +68,9 @@ public class SellerFormController implements Initializable {
 	private DatePicker dpBirthDate;
 	
 	@FXML
+	private ComboBox<Department> cbDepartment;
+	
+	@FXML
 	private Label labelErrorName;
 	
 	@FXML
@@ -72,6 +87,8 @@ public class SellerFormController implements Initializable {
 	
 	@FXML 
 	private Button btCancel;
+	
+	private ObservableList<Department> obsList;
 	
 	@FXML
 	private void onBtSaveAction(ActionEvent event) {
@@ -136,8 +153,12 @@ public class SellerFormController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		initializeNodes();
+		initializeComboBoxDepartment();
 	}
 	
+	/* Método responsável por inicializar o comportamento dos nodes
+	 * da minha aplicação gráfica.
+	 * */
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtName, 70);
@@ -153,8 +174,10 @@ public class SellerFormController implements Initializable {
 		this.entity = entity;
 	}
 	
-	public void setSellerService(SellerService sellerService) {
+	/* Método responsável por injetar dependências */
+	public void setServices(SellerService sellerService, DepartmentService depService) {
 		this.sellerService = sellerService;
+		this.depService = depService;
 	}
 	
 	/* Método responsável por inscrever um objeto interessado
@@ -201,8 +224,41 @@ public class SellerFormController implements Initializable {
 			 * final.
 			 * */
 		  dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
+		  
+		  /* Esse teste é necessário para previnir que seja setado um Department valendo null,
+		   * pois, num cadastro de um Seller, o Department pode não estar
+		   * setado, ou seja, o Seller pode não ter um Department ainda.
+		   * */
+		  if(entity.getDepartment() == null) {
+			  /* 
+			   * Setando o Department para ser apresentado dentro do 
+			   * ComboBox como sendo o primeiro.
+			   * */
+			  cbDepartment.getSelectionModel().selectFirst();
+		  } else {
+			  /* 
+			   * Setando o Department para ser apresentado dentro do 
+			   * ComboBox como sendo o Deparment associado ao seller.
+			   * */
+			  cbDepartment.setValue(entity.getDepartment());
+		  }
+		  
 		}
 		
+	}
+	
+	/* 
+	 * Método responsável por carregar os objetos associados(Departments) a
+	 * a um seller.
+	 * */
+	public void loadAssociatedObjects() {
+		if(depService == null) {
+			throw new IllegalStateException("DepartmentService was null");
+		}
+		
+		List<Department> list = depService.findAll();
+		obsList = FXCollections.observableArrayList(list);
+		cbDepartment.setItems(obsList);
 	}
 	
 	public void setErrorMessages(Map<String, String> errors) {
@@ -219,5 +275,20 @@ public class SellerFormController implements Initializable {
 		}
 	}
 	
+	/* 
+	 * Método responsável por formatar a forma como o Department é 
+	 * apresentado dentro do comboBox.
+	 * */
+	private void initializeComboBoxDepartment() {
+		Callback<ListView<Department>, ListCell<Department>> factory = lv -> new ListCell<Department>() {
+			@Override
+			protected void updateItem(Department item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty ? "" : item.getName());
+			}
+		};
+		cbDepartment.setCellFactory(factory);
+		cbDepartment.setButtonCell(factory.call(null));
+	}
 
 }

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -13,7 +14,7 @@
 
 <AnchorPane prefHeight="325.0" prefWidth="519.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerFormController">
    <children>
-      <GridPane layoutX="50.0" layoutY="48.0" prefHeight="202.0" prefWidth="414.0">
+      <GridPane layoutX="50.0" layoutY="48.0" prefHeight="230.0" prefWidth="414.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.4000244140625" minWidth="10.0" prefWidth="56.00001831054688" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.79998168945315" minWidth="10.0" prefWidth="148.79998168945315" />
@@ -22,6 +23,7 @@
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -37,7 +39,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
                   <Button fx:id="btSave" mnemonicParsing="false" onAction="#onBtSaveAction" text="Save" />
                   <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancel" />
@@ -67,6 +69,8 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
+            <Label text="Department" GridPane.rowIndex="5" />
+            <ComboBox fx:id="cbDepartment" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>

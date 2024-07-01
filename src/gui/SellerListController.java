@@ -31,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.services.DepartmentService;
 import model.services.SellerService;
 
 public class SellerListController implements Initializable, DataChangeListener {
@@ -179,7 +180,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 	 * Modal de dialogo, a janela pai seria  janela já existente
 	 * na tela, uma vez que, o modal ficará por cima dela, então, em
 	 * última instância, esse método cria um nova window */
-	private void createDialogForm(Seller dep, String absoluteName, Stage parentStage) {
+	private void createDialogForm(Seller seller, String absoluteName, Stage parentStage) {
 		try {
 			/* 
 			* Obtendo o FXML correspondente a alguma view
@@ -195,8 +196,10 @@ public class SellerListController implements Initializable, DataChangeListener {
 			 * trabalhando no padrão MVC.
 			 *  */
 			 SellerFormController controller = loader.getController();
-			 controller.setSeller(dep);
-			 controller.setSellerService(new SellerService());
+			 controller.setSeller(seller);
+			 controller.setServices(new SellerService(), new DepartmentService());
+			 
+			 controller.loadAssociatedObjects();
 			
 			/* Registrando um listener que será notificado quando o evento ocorrer */
 			controller.subscribeDataChangeListener(this);
@@ -226,6 +229,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception","Error loading dialog window", e.getMessage(), AlertType.ERROR);
 		} finally {
 			
