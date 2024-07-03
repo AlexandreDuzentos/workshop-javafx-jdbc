@@ -64,7 +64,7 @@
                   <Insets left="5.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="labelErrorDpBirthDate" minWidth="-Infinity" prefHeight="18.0" prefWidth="133.0" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <Label fx:id="labelErrorBirthDate" minWidth="-Infinity" prefHeight="18.0" prefWidth="133.0" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>

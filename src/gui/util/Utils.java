@@ -30,15 +30,24 @@ public class Utils {
 	 * Método responsável por tentar efetuar uma conversão de uma String para
 	 * Integer.
 	 */
-	public static Integer tryParseToInt(String str) {
-		
+	public static Integer tryParseToInt(String str) {	
 		try {
 			return Integer.parseInt(str);
 		} catch (NumberFormatException e) {
 			return null;
-		}
-		
-		
+		}	
+	}
+	
+	/*
+	 * Método responsável por tentar efetuar uma conversão de uma String para
+	 * Double.
+	 */
+	public static Double tryParseToDouble(String str) {	
+		try {
+			return Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+			return null;
+		}	
 	}
 
 	/*

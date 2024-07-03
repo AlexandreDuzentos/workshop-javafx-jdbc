@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +82,7 @@ public class SellerFormController implements Initializable {
 	private Label labelErrorBaseSalary;
 	
 	@FXML
-	private Label labelErrorDpBirthDate;
+	private Label labelErrorBirthDate;
 	
 	@FXML
 	private Button btSave;
@@ -122,7 +124,11 @@ public class SellerFormController implements Initializable {
 		}
 		
 	}
-
+    
+	/* Método responsável por obter os dados do formulário para salvamento
+	 * ou atualização, a exata operação dependerá do id do objeto estar
+	 * setado ou não.
+	 * */
 	private Seller getFormData() {
 		Seller obj = new Seller();
 		
@@ -134,6 +140,39 @@ public class SellerFormController implements Initializable {
 			exception.addError("name", "Field can`t be empty");
 		}
 		obj.setName(txtName.getText());
+		
+		if(txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "Field can`t be empty");
+		}
+		obj.setEmail(txtEmail.getText());
+		
+		/* 
+		 * O método from obtém uma instância um Instant de um objeto
+		 * temporal.
+		 * 
+		 * O método atStartOfDate converte a data que foi escolhida no DatePicker
+		 * e que está no fuso-horário do computador do usuário para o Instant, que é
+		 * uma data indepedente de localidade.
+		 * 
+		 * É assim que a gente pega o valor do DatePicker, é numa variável 
+		 * do tipo Instant.
+		 * */
+		
+		if(dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "Field can't be empty");
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			obj.setBirthDate(Date.from(instant));
+		}
+		
+		if(txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "Field can`t be empty");
+		}
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		
+		obj.setDepartment(cbDepartment.getValue());
+		
+		
 		
 		/* Testando a existência de alguma exceção no objeto exception,
 		 * caso exista, eu já lanço a exceção.
@@ -190,8 +229,9 @@ public class SellerFormController implements Initializable {
 		this.dataChangeListeners.add(listener);
 	}
 	
-	/* Método responsável por atualizar os valores dos campos
-	 * do formulário com os dados do objeto Seller.
+	/* Método responsável por popular os valores dos campos
+	 * do formulário com os dados do objeto Seller quando a
+	 * view de formulário estiver para ser aberta.
 	 * */
 	public void updateFormData() {
 		/* Se a condição for verdadeira, isso significa a dependência
@@ -222,6 +262,14 @@ public class SellerFormController implements Initializable {
 			 * global para o formato local, pois é no formato local que
 			 * a data deve ser apresentado no computador do usuário
 			 * final.
+			 * 
+			 * o método setValue recebe uma instância de um objeto do tipo LocalDate.
+			 * 
+			 * o método ofInstant instância um objeto do tipo LocalDate a partir
+			 * de um instante e de um timezone especificado.
+			 * 
+			 * o método toInstant converte um objeto do tipo Date para um
+			 * objeto do tipo Instant.
 			 * */
 		  dpBirthDate.setValue(LocalDate.ofInstant(entity.getBirthDate().toInstant(), ZoneId.systemDefault()));
 		  
@@ -261,6 +309,9 @@ public class SellerFormController implements Initializable {
 		cbDepartment.setItems(obsList);
 	}
 	
+	/* Método responsável por exibir mensagens de erros nos labels
+	 * dos campos do formulário.
+	 * */
 	public void setErrorMessages(Map<String, String> errors) {
 		/* A método keySet retorna as chaves da coleção Map */
 		Set<String> fields = errors.keySet();
@@ -272,6 +323,26 @@ public class SellerFormController implements Initializable {
 		 * */
 		if(fields.contains("name")) {
 			labelErrorName.setText(errors.get("name"));
+		} else {
+			labelErrorName.setText("");
+		}
+		
+		if(fields.contains("email")) {
+			labelErrorEmail.setText(errors.get("email"));
+		} else {
+			labelErrorEmail.setText("");
+		}
+		
+		if(fields.contains("baseSalary")) {
+			labelErrorBaseSalary.setText(errors.get("baseSalary"));
+		} else {
+			labelErrorBaseSalary.setText("");
+		}
+		
+		if(fields.contains("birthDate")) {	
+		    labelErrorBirthDate.setText(errors.get("birthDate"));
+		} else {
+			labelErrorBaseSalary.setText("");
 		}
 	}
 	
